@@ -1,0 +1,9 @@
+﻿Технологія ADO.NET Вступ.
+
+Програма (C#.NET)         Connector          (T-SQL) СУБД (MS SQL - LocalDB)
+Колекція <----------------(ADO.NET)----------------> Таблиці
+
+
+БД та підключення
+- БД: (Project) - Add - new Item - (Data) - Service-based DB
+- Connector: (NuGet) - System.Data.SqlClient
