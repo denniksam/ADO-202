@@ -19,12 +19,15 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
+        <!-- Status-Monitor -->
         <Grid Grid.Column="0" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -34,11 +37,32 @@
                    Content="Status-Monitor" HorizontalAlignment="Center"
                    FontSize="26" FontWeight="DemiBold"/>
             <Label Grid.Column="0" Grid.Row="1"
-                   Content="Connection:" FontSize="20" />
+                   Content="MS SQL (local):" FontSize="16" />
             <Label Grid.Column="1" Grid.Row="1"
-                   x:Name="StatusConnection" FontSize="20" />
+                   x:Name="StatusConnection" FontSize="16" />
+            
+            <Label Grid.Column="0" Grid.Row="2"
+                   Content="MySQL (remote):" FontSize="16" />
+            <Label Grid.Column="1" Grid.Row="2"
+                   x:Name="StatusMyConnection" FontSize="16" />
+            
+            <Label Grid.Column="0" Grid.Row="3"
+                   Content="Departments:" FontSize="16" />
+            <Label Grid.Column="1" Grid.Row="3"
+                   x:Name="StatusDepartments" FontSize="16" />
+
+            <Label Grid.Column="0" Grid.Row="4"
+                   Content="Products:" FontSize="16" />
+            <Label Grid.Column="1" Grid.Row="4"
+                   x:Name="StatusProducts" FontSize="16" />
+
+            <Label Grid.Column="0" Grid.Row="5"
+                   Content="Managers:" FontSize="16" />
+            <Label Grid.Column="1" Grid.Row="5"
+                   x:Name="StatusManagers" FontSize="16" />
         </Grid>
 
+        <!-- Install Database -->
         <Grid Grid.Column="0" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -54,11 +78,48 @@
                    Content="Install Database" HorizontalAlignment="Center"
                    FontSize="26" FontWeight="DemiBold"/>
             <Button x:Name="CreateDepartments" Click="CreateDepartments_Click"
-                    Grid.Column="0" Grid.Row="1" >
+                    Grid.Column="0" Grid.Row="1"  Margin="3">
                 <TextBlock TextAlignment="Center">
                     Create<LineBreak/>Departments
                 </TextBlock>
             </Button>
+            
+            <Button x:Name="CreateProducts" Click="CreateProducts_Click"
+                    Grid.Column="0" Grid.Row="2" Margin="3">
+                <TextBlock TextAlignment="Center">
+                    Create<LineBreak/>Products
+                </TextBlock>
+            </Button>
+            <Button x:Name="FillProducts" Click="FillProducts_Click"
+                    Grid.Column="1" Grid.Row="2"  Margin="3">
+                <TextBlock TextAlignment="Center">
+                    Fill<LineBreak/>Products
+                </TextBlock>
+            </Button>
+
+            <Button x:Name="CreateManagers" Click="CreateManagers_Click"
+                    Grid.Column="0" Grid.Row="3" Margin="3">
+                <TextBlock TextAlignment="Center">
+                    Create<LineBreak/>Managers
+                </TextBlock>
+            </Button>
+            <Button x:Name="FillManagers" Click="FillManagers_Click"
+                    Grid.Column="1" Grid.Row="3"  Margin="3">
+                <TextBlock TextAlignment="Center">
+                    Fill<LineBreak/>Managers
+                </TextBlock>
+            </Button>
         </Grid>
+        
+        <!-- Departments view -->
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+            <Label Content="Departments" HorizontalAlignment="Center"
+                   FontSize="26" FontWeight="DemiBold"/>
+            <ScrollViewer HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollBarVisibility="Visible"
+                          MaxWidth="265" MaxHeight="170">                          
+                <TextBlock x:Name="ViewDepartments"/>
+            </ScrollViewer>
+        </StackPanel>
     </Grid>
 </Window>
