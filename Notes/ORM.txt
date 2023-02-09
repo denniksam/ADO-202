@@ -1,0 +1,45 @@
+﻿ORM - Object Relation Mapping - об'єктно-реляційне відображення
+Технологія (програмні прийоми) для утворення програмних об'єктів, колекцій
+та зв'язків між ними які відображають таблиці БД та реляції між ними
+
+У простішому випадку - це створення класів (Entities), об'єктів, їх колекцій, що 
+"дублюють" таблиці БД
+БД									   Програма
+TABLE Departments (					   class Department { Id, Name }
+	Id	 UNIQUEIDENTIFIER,	<------->		   
+	Name NVARCHAR(50) 				   List<Department> Departments
+)									   
+
+У складнішому випадку реалізуються "навігаційні" властивості, які дозволяють
+"відпрацьовувати" зв'язки, наприкла, за відомим Ид знайти назву сутності
+CREATE TABLE Managers (				    class Manager {
+	Id								    Id, ..., Id_chief
+	Surname							    
+	Name							    + Навігаційні:
+	Secname							      MainDep { get => ref Department(Id_main_dep) }
+	Id_main_dep 					      SecDep { get => ref Department(Id_sec_dep) }
+	Id_sec_dep						      Chief { get => ref Manager(Id_chief) }
+	Id_chief						    }
+) 									    class Department { Id, Name,
+										+ List<Manager> Workers {get}
+
+Автоматизовані фреймворки дозволяют проводити ORM автоматично,
+Mappers - сканують БД і утворюють класи, колекції
+ додають до колекцій методи на зразок .SaveChanges()
+ які передають зміни у колекції до БД (самі формують запити та виконують їх)
+EntityFramework - більш потужний, може навпаки створювати БД з аналізу класів
+
+
+Засоби WPF дозволяють спростити задачу відображення через зв'язування даних
+Window           MVVM          Program
+<ListView  <-- Binding --->    ObservableCollection<Department> Departments
+  ItemSource=Departments        DataContext=this
++item		<---------------   Departments.Add(dep)
+
+
+Особливості узгодження типів даних
+У БД будь-який тип даних може мати значення NULL
+У мовах програмування, частіше за все, не всі типи можут мати null
+Наприклад, у C# такими типами є ValueTypes, зокрема Guid, що є структурою
+Для роботи з NULL-типами у мовах програмування додають інтерфейс Nullable<T>,
+ або скороченно T?

@@ -1,0 +1,27 @@
+﻿<Window x:Class="ADO_202.StartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ADO_202"
+        mc:Ignorable="d"
+        Title="StartWindow" Height="450" Width="300">
+    <StackPanel>
+        <Label Content="ADO.NET"
+               FontSize="24"
+               FontWeight="DemiBold"
+               HorizontalAlignment="Center"/>
+        <Button x:Name="BasicsButton"
+                Click="BasicsButton_Click"
+                Content="1. Вступ. Основи"
+                Margin="20 10"
+                Padding="15 5"
+                HorizontalContentAlignment="Left"/>
+        <Button x:Name="OrmButton"
+                Click="OrmButton_Click"
+                Content="2. ORM. Відображення"
+                Margin="20 10"
+                Padding="15 5"
+                HorizontalContentAlignment="Left"/>
+    </StackPanel>
+</Window>

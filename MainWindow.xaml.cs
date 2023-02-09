@@ -34,7 +34,7 @@ namespace ADO_202
             // !! створення об'єкта не відкиває підключення
             _connection = new();
             // головний параметр - рядок підключення
-            _connection.ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\_dns_\source\repos\ADO-202\ADO-202.mdf;Integrated Security=True";
+            _connection.ConnectionString = App.ConnectionString;
             _myConnection = new(File.ReadAllText("my_con.txt"));
         }
 
@@ -58,7 +58,7 @@ namespace ADO_202
             }
             try  // відкриваємо підключення
             {
-                // _myConnection.Open();
+                _myConnection.Open();
                 // відображаємо статус підключення на вікні
                 StatusMyConnection.Content = "Connected";
                 StatusMyConnection.Foreground = Brushes.Green;
