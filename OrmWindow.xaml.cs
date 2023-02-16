@@ -24,6 +24,7 @@ namespace ADO_202
     {
         public ObservableCollection<Entity.Department> Departments { get; set; }
         public ObservableCollection<Entity.Manager> Managers { get; set; }
+        public ObservableCollection<Entity.Product> Products { get; set; }
 
         private readonly SqlConnection _connection;
 
@@ -32,6 +33,7 @@ namespace ADO_202
             InitializeComponent();
             Departments = new();
             Managers = new();
+            Products = new();
             this.DataContext = this;   // місце пошуку {Binding Departments}
             _connection = new(App.ConnectionString);
         }
@@ -54,6 +56,16 @@ namespace ADO_202
                             Id = reader.GetGuid(0),
                             Name = reader.GetString(1)
                         });
+                }
+                reader.Close();
+                #endregion
+
+                #region Load Products
+                cmd.CommandText = "SELECT P.* FROM Products P WHERE P.DeleteDt IS NULL";
+                reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Products.Add( new(reader) );
                 }
                 reader.Close();
                 #endregion
@@ -135,11 +147,93 @@ namespace ADO_202
             {
                 if (item.Content is Entity.Manager manager)
                 {
-                    MessageBox.Show(manager.Surname);
+                    CrudManagerWindow dialog = new(manager) { Owner = this };
+                    if(dialog.ShowDialog() == true)
+                    {
+                        
+                    }
+
+                    // MessageBox.Show(manager.Surname);
+                }
+            }
+        }
+        
+        private void ProductsItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListViewItem item)
+            {
+                if (item.Content is Entity.Product product)
+                {
+                    CrudProductWindow dialog = new(product);
+                    if (dialog.ShowDialog() == true)  // виконана (підтверджена) дія
+                    {
+                        if (dialog.EditedProduct is null)  // дія - видалення
+                        {
+                            using SqlCommand cmd = new() { Connection = _connection };
+                            cmd.CommandText = "UPDATE Products SET DeleteDt = CURRENT_TIMESTAMP WHERE Id = @id ";
+                            cmd.Parameters.AddWithValue("@id", product.Id);
+                            try
+                            {
+                                cmd.ExecuteNonQuery();
+                                Products.Remove(product);
+                                MessageBox.Show("Видалення: " + product.Name);
+                            }
+                            catch(Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
+                            
+                        }
+                        else  // дія - збереження
+                        {
+                            int index = Products.IndexOf(product);
+                            Products.Remove(product);
+                            Products.Insert(index, product);
+                            MessageBox.Show("Оновлення: " + product.Name);
+                        }
+                    }
+                    else  // вікно закрите або натиснуто Cancel
+                    {
+                        MessageBox.Show("Дію скасовано");
+                    }
+                    // MessageBox.Show(product.Name + " " + product.Price);
                 }
             }
         }
 
+        private void AddProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            CrudProductWindow dialog = new(null!);
+            if (dialog.ShowDialog() == true)
+            {
+                if(dialog.EditedProduct is not null)
+                {
+                    /* String sql = "INSERT INTO Products(Id, Name, Price) VALUES" +
+                        $"('{dialog.EditedProduct.Id}', N'{dialog.EditedProduct.Name}', {dialog.EditedProduct.Price})";
+                    using SqlCommand cmd = new(sql, _connection);
+                    */
+                    String sql = "INSERT INTO Products(Id, Name, Price) VALUES(@id, @name, @price)";
+                    using SqlCommand cmd = new(sql, _connection);
+                    cmd.Parameters.AddWithValue("@id", dialog.EditedProduct.Id);
+                    cmd.Parameters.AddWithValue("@name", dialog.EditedProduct.Name);
+                    cmd.Parameters.AddWithValue("@price", dialog.EditedProduct.Price);
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                        Products.Add(dialog.EditedProduct);
+                        MessageBox.Show("Додано: " + dialog.EditedProduct.Name);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+            else  // вікно закрите або натиснуто Cancel
+            {
+                MessageBox.Show("Дію скасовано");
+            }
+        }
     }
 }
 /* Д.З. Реалізувати роботу CRUD :

@@ -15,5 +15,13 @@ namespace ADO_202.Entity
         public Guid   IdMainDep { get; set; }    // NOT NULL
         public Guid?  IdSecDep  { get; set; }    // NULL
         public Guid?  IdChief   { get; set; }    // NULL
+
+        public Manager()
+        {
+            Id = Guid.NewGuid();
+            Surname = null!;
+            Name = null!;
+            Secname = null!;
+        }
     }
 }

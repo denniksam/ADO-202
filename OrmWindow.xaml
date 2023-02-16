@@ -50,6 +50,44 @@
         </StackPanel>
 
         <StackPanel Orientation="Vertical"
+                    Grid.Row="0" Grid.Column="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="Товари"
+                   FontSize="20"
+                   FontWeight="DemiBold"/>
+                <Button x:Name="AddProductButton"
+                        Content="+" 
+                        Margin="20 2 0 2" Padding="5 1"
+                        Click="AddProductButton_Click"/>
+            </StackPanel>
+            <ListView ItemsSource="{Binding Products}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      MaxHeight="175">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            Header="Id"
+                            DisplayMemberBinding="{Binding Path=Id}"/>
+                        <GridViewColumn
+                            Header="Name"
+                            DisplayMemberBinding="{Binding Path=Name}"/>
+                        <GridViewColumn
+                            Header="Price"
+                            DisplayMemberBinding="{Binding Path=Price}"/>
+                    </GridView>
+                </ListView.View>
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <EventSetter
+                            Event="MouseDoubleClick"
+                            Handler="ProductsItem_MouseDoubleClick"/>
+                    </Style>
+                </ListView.Resources>
+            </ListView>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical"
                     Grid.Row="1" Grid.Column="1">
             <Label Content="Співробітники"
                    FontSize="20"
