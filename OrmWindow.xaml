@@ -122,5 +122,40 @@
                 </ListView.Resources>
             </ListView>
         </StackPanel>
+
+        <StackPanel Orientation="Vertical"
+                    Grid.Row="1" Grid.Column="0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="Продажі"
+                   FontSize="20"
+                   FontWeight="DemiBold"/>
+                <Button x:Name="AddSaleButton"
+                        Content="+" 
+                        Margin="20 2 0 2" Padding="5 1"
+                        Click="AddSaleButton_Click"/>
+            </StackPanel>
+            <ListView ItemsSource="{Binding Sales}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            Header="Id"
+                            DisplayMemberBinding="{Binding Path=Id}"/>
+                        <GridViewColumn
+                            Header="Date"
+                            DisplayMemberBinding="{Binding Path=SaleDt}"/>
+                        <GridViewColumn
+                            Header="Cnt"
+                            DisplayMemberBinding="{Binding Path=Cnt}"/>
+                    </GridView>
+                </ListView.View>
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <EventSetter
+                            Event="MouseDoubleClick"
+                            Handler="SalesItem_MouseDoubleClick"/>
+                    </Style>
+                </ListView.Resources>
+            </ListView>
+        </StackPanel>
     </Grid>
 </Window>

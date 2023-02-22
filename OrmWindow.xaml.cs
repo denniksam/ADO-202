@@ -25,6 +25,7 @@ namespace ADO_202
         public ObservableCollection<Entity.Department> Departments { get; set; }
         public ObservableCollection<Entity.Manager> Managers { get; set; }
         public ObservableCollection<Entity.Product> Products { get; set; }
+        public ObservableCollection<Entity.Sale> Sales { get; set; }
 
         private readonly SqlConnection _connection;
 
@@ -34,6 +35,7 @@ namespace ADO_202
             Departments = new();
             Managers = new();
             Products = new();
+            Sales = new();
             this.DataContext = this;   // місце пошуку {Binding Departments}
             _connection = new(App.ConnectionString);
         }
@@ -90,6 +92,16 @@ namespace ADO_202
                                         ? null
                                         :reader.GetGuid(6)
                         });
+                }
+                reader.Close();
+                #endregion
+
+                #region Load Sales
+                cmd.CommandText = "SELECT S.* FROM Sales S";
+                reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Sales.Add(new(reader));
                 }
                 reader.Close();
                 #endregion
@@ -232,6 +244,51 @@ namespace ADO_202
             else  // вікно закрите або натиснуто Cancel
             {
                 MessageBox.Show("Дію скасовано");
+            }
+        }
+
+        private void SalesItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListViewItem item)
+            {
+                if (item.Content is Entity.Sale sale)
+                {
+                   //CrudManagerWindow dialog = new(manager) { Owner = this };
+                   //if (dialog.ShowDialog() == true)
+                   //{
+                   //
+                   //}
+
+                    // MessageBox.Show(manager.Surname);
+                }
+            }
+        }
+        private void AddSaleButton_Click(object sender, RoutedEventArgs e)
+        {
+            CrudSaleWindow dialog = new(null) { Owner = this };
+            if (dialog.ShowDialog() == true && dialog.Sale is not null)
+            {
+                using SqlCommand cmd = new(
+                    "INSERT INTO Sales(Id, ProductId, ManagerId, Cnt, SaleDt) " +
+                    "VALUES (@Id, @ProductId, @ManagerId, @Count, @SaleDt)", 
+                    _connection);
+
+                cmd.Parameters.AddWithValue("@Id",dialog.Sale.Id);
+                cmd.Parameters.AddWithValue("@ProductId", dialog.Sale.ProductId);
+                cmd.Parameters.AddWithValue("@ManagerId", dialog.Sale.ManagerId);
+                cmd.Parameters.AddWithValue("@Count", dialog.Sale.Cnt);
+                cmd.Parameters.AddWithValue("@SaleDt", dialog.Sale.SaleDt);
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    Sales.Add(dialog.Sale);
+                    MessageBox.Show("Додано успішно");
+                }
+                catch(Exception ex) 
+                {
+                    MessageBox.Show("Помилка додавання: " + ex.Message);
+                }
             }
         }
     }
