@@ -1,0 +1,37 @@
+﻿DAL - Data Access Layer - Шар доступу до даних
+Архітектурний шар, задачею якого є створення інтерфейсів доступу до даних
+
+Без DAL
+
+Window  <---------------------> Entity
+"SELECT * FROM Sales"			Sale(reader)
+sales.add
+
+- Змішування рівнів абстракції
+- Високе зчеплення (coupling) об'єктів
+- "S" - єдиний обов'язок (вікно керує SQL запитами)
+
+з DAL
+Window   <------------->    DAL                     Entity
+salesApi				SalesApi.getAll()   		Sale(reader)
+.getAll()               "SELECT * FROM Sales"
+
++ Знижуємо зчеплення - вікно можна переносити/копіювати
++ Відкриваються можливості "О" (open/close) - можна заміняти SalesApi на нові розробки
+
+Window                          DAL                     Entity
+ISaleApi salesApi	---->	SalesApi:ISaleApi   		Sale(reader)
+                    \--->  SalesApiNew:ISaleApi
++ "D" - пряму залежність від реалізацій замінюємо на інтерфейсну
+! "L" - замість SalesApi можна підставити SalesApiNew без проблем
+
+"І" - розділення інтерфейсів - краще декілька простих інтерфейсів, ніж один великий
+У БД сутності, хоч і подібні, але достатньо відмінні між собою. Це ускладнює
+створення "єдиного" інтерфейсу. 
+
+Контекст даних - концепція поєднання різних-подібних DataApi (DAO) у єдиний об'єкт
+
+Window                    DAL                         Entity
+DataContext             DataContext                   Sale
+                       {SaleApi, UserApi}             User
+

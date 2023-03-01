@@ -1,4 +1,4 @@
-﻿<Window x:Class="ADO_202.StartWindow"
+﻿<Window x:Class="ADO_202.View.StartWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,6 +20,12 @@
         <Button x:Name="OrmButton"
                 Click="OrmButton_Click"
                 Content="2. ORM. Відображення"
+                Margin="20 10"
+                Padding="15 5"
+                HorizontalContentAlignment="Left"/>
+        <Button x:Name="DalButton"
+                Click="DalButton_Click"
+                Content="3. DAL. Контекст даних"
                 Margin="20 10"
                 Padding="15 5"
                 HorizontalContentAlignment="Left"/>

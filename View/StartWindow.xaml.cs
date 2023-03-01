@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ADO_202
+namespace ADO_202.View
 {
     /// <summary>
     /// Interaction logic for StartWindow.xaml
@@ -35,6 +35,13 @@ namespace ADO_202
         {
             this.Hide();
             new OrmWindow().ShowDialog();
+            this.Show();
+        }
+
+        private void DalButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+            new View.DalWindow().ShowDialog();
             this.Show();
         }
     }
