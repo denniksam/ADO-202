@@ -14,11 +14,13 @@ namespace ADO_202.DAL
     {
         private readonly SqlConnection _connection;
         private readonly ILogger _logger;
+        private readonly DataContext _context;
 
-        public ManagerApi(SqlConnection connection)
+        public ManagerApi(SqlConnection connection, DataContext context)
         {
             _connection = connection;
             _logger = App.Logger;
+            _context = context;
         }
 
         public List<Entity.Manager> GetAll(bool includeDeleted = false)
@@ -32,7 +34,7 @@ namespace ADO_202.DAL
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    list.Add(new(reader));
+                    list.Add(new(reader) { _dataContext = _context });
                 }
             }
             catch (Exception ex) 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ADO_202.DAL;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -43,6 +44,21 @@ namespace ADO_202.Entity
             FiredDt   = reader.IsDBNull("FiredDt") 
                         ? null 
                         : reader.GetDateTime("FiredDt");
+        }
+
+        //////////////////// NAVIGATION PROPERTIES //////////////////////
+
+        internal DataContext? _dataContext { get; init; }  // залежність - посилання на контекст даних
+
+        public Department? MainDep    // навігаційна властивість
+        {
+            get
+            {
+                return _dataContext?  // TODO: реалізувати у DepartmentsApi
+                    .Departments      // метод пошуку відділу за Id
+                    .GetAll()         // (!! не через SQL, а зі своєї колекції)
+                    .Find(dep => dep.Id == this.IdMainDep);
+            }
         }
     }
 }

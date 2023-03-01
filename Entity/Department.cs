@@ -1,4 +1,5 @@
-﻿using Mysqlx.Crud;
+﻿using ADO_202.DAL;
+using Mysqlx.Crud;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -29,5 +30,18 @@ namespace ADO_202.Entity
                         ? null 
                         : reader.GetDateTime(2);
         }
-    }                                        
+
+
+        //////////////////// NAVIGATION PROPERTIES (INVERSE) //////////////////////
+
+        internal DataContext? _dataContext { get; init; }  // залежність - посилання на контекст даних
+
+        public List<Entity.Manager>? MainManagers  
+        { 
+            get => _dataContext?
+                    .Managers
+                    .GetAll()
+                    .FindAll(m => m.IdMainDep == this.Id);
+        }
+    }
 }

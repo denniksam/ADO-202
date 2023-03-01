@@ -37,6 +37,9 @@
                         <GridViewColumn
                             Header="Name"
                             DisplayMemberBinding="{Binding Path=Name}"/>
+                        <GridViewColumn
+                            Header="Main"
+                            DisplayMemberBinding="{Binding Path=MainManagers.Count}"/>
                     </GridView>
                 </ListView.View>
                 <ListView.Resources>
@@ -70,8 +73,14 @@
                             Header="Id"
                             DisplayMemberBinding="{Binding Path=Id}"/>
                         <GridViewColumn
+                            Header="Surname"
+                            DisplayMemberBinding="{Binding Path=Surname}"/>
+                        <GridViewColumn
                             Header="Name"
                             DisplayMemberBinding="{Binding Path=Name}"/>
+                        <GridViewColumn
+                            Header="Main Dep"
+                            DisplayMemberBinding="{Binding Path=MainDep.Name}"/>
                     </GridView>
                 </ListView.View>
                 <ListView.Resources>

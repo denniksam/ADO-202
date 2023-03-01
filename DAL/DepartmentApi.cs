@@ -14,16 +14,31 @@ namespace ADO_202.DAL
     {
         private readonly SqlConnection _connection;
         private readonly ILogger _logger;
+        private readonly DataContext _context;
 
-        public DepartmentApi(SqlConnection connection)
+        private List<Department> departments;
+
+        public DepartmentApi(SqlConnection connection, DataContext context)
         {
             _connection = connection;
             _logger = App.Logger;
+            _context = context;
+            departments = null!;  // Lazy - колекція буде побудована з першим запитом
         }
-
-        public List<Entity.Department> GetAll()
+        /// <summary>
+        /// Returns list of Departments from DB
+        /// </summary>
+        /// <param name="forceReload">Defines use of cached list or to reload DB</param>
+        /// <returns></returns>
+        public List<Entity.Department> GetAll(bool forceReload = false)
         {
-            var departments = new List<Department>();
+            if(departments is not null    // якщо раніше колекція створювалась
+                && !forceReload)          // та не вимагається примусового перечитування
+            {
+                return departments;       //  то повертаємо її
+            }
+
+            departments = new();
             try
             {
                 using SqlCommand command = new(
@@ -32,7 +47,7 @@ namespace ADO_202.DAL
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    departments.Add(new(reader));
+                    departments.Add(new(reader) { _dataContext = _context });
                 }
             }
             catch (Exception ex)  // Logging - правильний спосіб оброблення виключень

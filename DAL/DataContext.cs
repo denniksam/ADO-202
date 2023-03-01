@@ -29,8 +29,8 @@ namespace ADO_202.DAL
 
                 throw new Exception("Data context init error. See logs for details");
             }
-            Departments = new DepartmentApi(_connection);
-            Managers = new ManagerApi(_connection);
+            Departments = new DepartmentApi(_connection, this);
+            Managers = new ManagerApi(_connection, this);
         }
     }
 }
