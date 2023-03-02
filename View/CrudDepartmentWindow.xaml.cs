@@ -31,9 +31,14 @@ namespace ADO_202
         {
             if(EditedDepartment != null) 
             { 
-                ViewId.Text = EditedDepartment.Id.ToString();
                 ViewName.Text = EditedDepartment.Name;
             }
+            else
+            {
+                EditedDepartment = new Entity.Department();
+                DeleteButton.IsEnabled = false;
+            }
+            ViewId.Text = EditedDepartment.Id.ToString();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

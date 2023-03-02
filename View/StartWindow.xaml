@@ -29,5 +29,11 @@
                 Margin="20 10"
                 Padding="15 5"
                 HorizontalContentAlignment="Left"/>
+        <Button x:Name="EfButton"
+                Click="EfButton_Click"
+                Content="4. Entity Framework Core"
+                Margin="20 10"
+                Padding="15 5"
+                HorizontalContentAlignment="Left"/>
     </StackPanel>
 </Window>
