@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:ADO_202.View"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="EfWindow" Height="450" Width="800">
+        Title="EfWindow" Height="850" Width="1200">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -25,16 +25,25 @@
 
         <StackPanel Orientation="Vertical"
                     Grid.Row="0" Grid.Column="1">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <CheckBox x:Name="ShowDeletedDepartmentsCheckbox"
+                          VerticalAlignment="Center"
+                          Margin="10 0 40 0"
+                          Content="Показувати видалені" 
+                          Checked="ShowDeletedDepartmentsCheckbox_Checked"
+                          Unchecked="ShowDeletedDepartmentsCheckbox_Unchecked"/>
                 <Label Content="Відділення"
                    FontSize="20"
                    FontWeight="DemiBold"/>
                 <Button x:Name="AddDepartmentButton"
                         Content="+" FontSize="18"
-                        Margin="20 5 0 5" Padding="9 0 9 5"
+                        Margin="60 5 0 5" Padding="9 0 9 5"
                         Click="AddDepartmentButton_Click"/>
             </StackPanel>
-            <ListView x:Name="DepartmentsList">
+            <ListView x:Name="DepartmentsList"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      MaxHeight="375">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn
@@ -43,6 +52,11 @@
                         <GridViewColumn
                             Header="Name"
                             DisplayMemberBinding="{Binding Path=Name}"/>
+                        <!-- Width="0" - початково невидима колонка -->
+                        <GridViewColumn
+                            Width="0"
+                            Header="DeleteDt"
+                            DisplayMemberBinding="{Binding Path=DeleteDt}"/>
                     </GridView>
                 </ListView.View>
                 <ListView.Resources>
@@ -54,6 +68,46 @@
                 </ListView.Resources>
             </ListView>
         </StackPanel>
-        
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Label Content="Денна статистика" FontWeight="DemiBold"/>
+                <Button Content="+ продаж" Padding="7 0 7 3" Margin="10 3 3 3"
+                        x:Name="AddSalesButton" Click="AddSalesButton_Click"/>
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <Label Grid.Row="0" Grid.Column="0" Content="Чеків"/>
+                <Label Grid.Row="0" Grid.Column="1" Content="0" x:Name="SalesChecks"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Товарів"/>
+                <Label Grid.Row="1" Grid.Column="1" Content="0" x:Name="SalesCnt"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Початок"/>
+                <Label Grid.Row="2" Grid.Column="1" Content="00:00:00" x:Name="StartMoment"/>
+
+                <Label Grid.Row="3" Grid.Column="0" Content="Кінець"/>
+                <Label Grid.Row="3" Grid.Column="1" Content="00:00:00" x:Name="FinishMoment"/>
+
+                <Label Grid.Row="4" Grid.Column="0" Content="Макс продаж"/>
+                <Label Grid.Row="4" Grid.Column="1" Content="0" x:Name="MaxCheckCnt"/>
+
+                <Label Grid.Row="5" Grid.Column="0" Content="Середній продаж"/>
+                <Label Grid.Row="5" Grid.Column="1" Content="0.0" x:Name="AvgCheckCnt"/>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Window>
