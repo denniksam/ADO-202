@@ -48,6 +48,7 @@ namespace ADO_202.View
                 obj => (obj as Department)?.DeleteDt == null;  // TODO: replace with HideDeletedDepartmentsFilter
 
             UpdateMonitor();
+            UpdateDailyStatistics();
         }
         private void UpdateMonitor()
         {
@@ -56,7 +57,7 @@ namespace ADO_202.View
             MonitorBlock.Text += "\nManagers: " + efContext.Managers.Count();
             MonitorBlock.Text += "\nSales: " + efContext.Sales.Count();
         }
-        
+
         // Завдання: реалізувати обчислення денної статистики 
         private void UpdateDailyStatistics()
         {
@@ -76,6 +77,28 @@ namespace ADO_202.View
             AvgCheckCnt.Content = "0.0";
             // Повернення - чеки, що є видаленими (кількість чеків за сьогодні)
             DeletedCheckCnt.Content = "0";
+
+            // ------------------------------------------------------------------
+            // 
+
+            var query1 = efContext.Products    // GroupJoin - групування + поєднання
+                .GroupJoin(                    // майже те ж саме, але порядок колекцій
+                    efContext.Sales.Where(s => s.SaleDt.Date == DateTime.Today),           // має значення
+                    p => p.Id,                 // 
+                    s => s.ProductId,          // асиметрія проявляється у тому, що
+                    (p, sales) => new          // перший параметр - один,
+                    {                          // а другий - колекція
+                        Name = p.Name,         // 
+                        Cnt = sales.Count()    //
+                    }                          // 
+                );
+
+            BestProduct.Content = query1.OrderByDescending(item => item.Cnt).First().Name;
+
+            foreach (var item in query1)
+            {
+                LogBlock.Text += $"{item.Name} --- {item.Cnt}\n";
+            }
         }
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -175,7 +198,8 @@ namespace ADO_202.View
                 });
             }
             efContext.SaveChanges();
-            UpdateMonitor();            
+            UpdateMonitor();     
+            UpdateDailyStatistics();
 
             /* Загальне:
              * Робота з DbContext "під капотом" переводиться у SQL.

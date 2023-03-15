@@ -1,0 +1,105 @@
+LINQ-to-Entity: Об'єднання та групування
+
+Загальна задача: визначити кращий за продажами товар
+
+           Способи вирішення
+Products                         Sales
+Id, Name						 ProductId, Cnt
+          \ об'єднання      / групування
+           \      Grp      /
+             ProductId, Sum
+
+1. Групування
+var query1 = efContext.Sales
+    .Where(s => s.SaleDt.Date == DateTime.Today)
+    .GroupBy(s => s.ProductId);  // Ключ (Key) групування (ProductId)
+// результат групування - IGrouping<Guid, Sale> - колекція Sale під ключами Guid
+foreach (IGrouping<Guid, Sale> grp in query1)
+{
+    LogBlock.Text += $"{grp.Key} --- {grp.Count()}\n";
+}
+
+2. Поєднання
+var query1 = efContext.Sales
+    .Where(s => s.SaleDt.Date == DateTime.Today)
+    .GroupBy(s => s.ProductId)  // Ключ (Key) групування (ProductId) --> IGrouping<Guid, Sale> grp
+    .Join(                      // Поєднання - з попереднім (не з Sales, а з рез-том групування)
+        efContext.Products,     // 1) inner - з чим поєднуємо
+        grp => grp.Key,         // 2) outerKey - grp.Key == s.ProductId (ключ групування)
+        p => p.Id,              // 3) innerKey - Products.Id (з чим збігається outerKey)
+        (grp, p) => new         // 4) resultSelector - що робити з парою (grp, p) у
+        {                       //  якої збігаються grp.Key та p.Id :
+            Name = p.Name,      // утворюється об'єкт анонімного типу з полями 
+            Cnt = grp.Count()   // Name та Cnt
+        }                       // 
+    );                          // 
+
+foreach (var item in query1)
+{
+    LogBlock.Text += $"{item.Name} --- {item.Cnt}\n";
+}
+При запуску - виключення: ...  could not be translated. Either rewrite the query in a form 
+  that can be translated, or switch to client evaluation explicitly by inserting a call 
+  to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'
+Причина: переклад на SQL видає помилку. Чому - у SQL не можна змінювати порядок інструкцій
+ GroupBy та Join (правильно JOIN ... GROUP BY). Також є обмеження на групування у під-запитах
+
+Слідуємо рекомендації а) to 'AsEnumerable'
+...
+.GroupBy(s => s.ProductId) 
+.AsEnumerable()
+.Join( ...
+
+При запуску - виключення: 'There is already an open DataReader associated with this Connection which must be closed first.'
+Імовірніше за все, .AsEnumerable() створений у варіанті ітератора для роботи з великими даними
+    { while(Reader.Read()) yield new Grp(...) ; }
+протягом ітерування Reader не закривається. Але .Join() відкриє наступний DataReader
+
+Слідуємо рекомендації б) to 'ToList'
+...
+.GroupBy(s => s.ProductId) 
+.ToList()
+.Join( ...
+
+Працює. Але використання .ToList() призводить до передачі усіх даних від СУБД до клієнта
+і може бути неефективним (і навіть неможливим через брак ресурсів)
++ виникає ситуація поєднання локальної колекції (ToList()) з віддаленою таблицею efContext.Products
+  яка не може вирішуватись одним SQL запитом і буде створювати запити під кожен Id
+  ( проблема "N+1" - необхідність виконати N+1 SQL запит для утворення відповіді)
+
+
+Краще рішення: GroupJoin
+варіант 1 - працює:
+var query1 = efContext.Products    // GroupJoin - групування + поєднання
+    .GroupJoin(                    // майже те ж саме, але порядок колекцій
+        efContext.Sales,           // має значення
+        p => p.Id,                 // 
+        s => s.ProductId,          // асиметрія проявляється у тому, що
+        (p, sales) => new          // перший параметр - один,
+        {                          // а другий - колекція
+            Name = p.Name,         // 
+            Cnt = sales.Where(s => s.SaleDt.Date == DateTime.Today).Count()    //
+        }                          // 
+    );         
+
+варіант 2 - працює:
+var query1 = efContext.Products    // GroupJoin - групування + поєднання
+    .GroupJoin(                    // майже те ж саме, але порядок колекцій
+        efContext.Sales.Where(s => s.SaleDt.Date == DateTime.Today),           // має значення
+        p => p.Id,                 // 
+        s => s.ProductId,          // асиметрія проявляється у тому, що
+        (p, sales) => new          // перший параметр - один,
+        {                          // а другий - колекція
+            Name = p.Name,         // 
+            Cnt = sales.Count()    //
+        }                          // 
+    );
+
+Все ж таки максимум продажів
+BestProduct.Content = query1.Max(item => item.Cnt).ToString();
+виключення - SqlException: 'Cannot perform an aggregate function on an expression containing 
+                            an aggregate or a subquery.'
+
+SQL обмежує змішування агрегаторів (Max) та групуваних полів
+
+інший спосіб - сотрування + обмеження

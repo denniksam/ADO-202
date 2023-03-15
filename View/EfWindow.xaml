@@ -9,9 +9,9 @@
         Title="EfWindow" Height="850" Width="1200">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -88,6 +88,10 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 
                 <Label Grid.Row="0" Grid.Column="0" Content="Чеків"/>
@@ -107,7 +111,18 @@
 
                 <Label Grid.Row="5" Grid.Column="0" Content="Середній продаж"/>
                 <Label Grid.Row="5" Grid.Column="1" Content="0.0" x:Name="AvgCheckCnt"/>
+                
+                <Label Grid.Row="6" Grid.Column="0" Content="Повернень"/>
+                <Label Grid.Row="6" Grid.Column="1" Content="0" x:Name="DeletedCheckCnt"/>
+
+                <Separator Grid.Row="7" Grid.ColumnSpan="2"/>
+                
+                <Label Grid.Row="8" Grid.Column="0" Content="Кращий товар"/>
+                <Label Grid.Row="8" Grid.Column="1" Content="-" x:Name="BestProduct"/>
+                
             </Grid>
         </StackPanel>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LogBlock"/>
     </Grid>
 </Window>
