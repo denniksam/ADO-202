@@ -95,10 +95,130 @@ namespace ADO_202.View
 
             BestProduct.Content = query1.OrderByDescending(item => item.Cnt).First().Name;
 
-            foreach (var item in query1)
+            // ----------------------------------------------------------------------
+            #region Кращий робітник (чеки)
+            var bestManager = efContext.Managers
+                .GroupJoin(
+                    efContext.Sales.Where(s => s.SaleDt.Date == DateTime.Today),
+                    m => m.Id,            // При групуванні результатів
+                    s => s.ManagerId,     // поширеним є прийом за якого
+                    (m, ss) => new        // у resultSelector залишають
+                    {                     // самі сутності
+                        Manager = m,      // Колекції краще обробляти, бо це ітератори,
+                        Cnt = ss.Count()  //  які після завершення запиту можуть не спрацювати
+                    })                    // Якщо колекція потрібна, то  ss.ToList()
+                .OrderByDescending(m => m.Cnt)
+                .First();                 // або .Take(3) якщо потрібно 3 кращих
+
+            BestManager.Content = bestManager.Manager.Surname + " " +
+                bestManager.Manager.Name[0] + ". " +
+                bestManager.Manager.Secname[0] + ". -- " +
+                bestManager.Cnt;
+            #endregion
+
+            #region Три Кращі робітники (за шт) - за сумою проданих товарів
+            // Варіант 1
+            var topThreeManagers = efContext.Sales.Where(s => s.SaleDt.Date == DateTime.Today)
+                .GroupBy(s => s.ManagerId)
+                .Select(g => new { 
+                    Manager = efContext.Managers.Single(m => m.Id == g.Key), 
+                    TotalSales = g.Sum(s => s.Cnt) })
+                .OrderByDescending(m => m.TotalSales)
+                .Take(3);
+            // Варіант 2
+            var bestManagers = efContext.Managers
+                .GroupJoin(
+                    efContext.Sales.Where(s => s.SaleDt.Date == DateTime.Today),
+                    m => m.Id,
+                    s => s.ManagerId,
+                    (m, ss) => new
+                    {
+                        Manager = m,
+                        Pcs = ss.Sum(s => s.Cnt)
+                    })
+                .OrderByDescending(m => m.Pcs)
+                .Take(3);
+
+            int n = 1;
+            BestManagers.Content = "";
+            foreach (var item in bestManagers)
             {
-                LogBlock.Text += $"{item.Name} --- {item.Cnt}\n";
+                BestManagers.Content += $"{n++} - {item.Manager?.Surname} ({item.Pcs} шт) \n";
             }
+            /*
+            foreach (var item in topThreeManagers)
+            {
+                LogBlock.Text += $"{n++} - {item.Manager?.Surname} ({item.TotalSales} шт) \n";
+            }*/
+            #endregion
+
+            #region Кращий робітник (грн)
+            /*
+            var bestHrn = efContext.Sales
+                 .Where(s => s.SaleDt.Date == DateTime.Today)
+                 .GroupBy(s => s.ManagerId)
+                 .Select(g => new
+                     {
+                         ManagerName = efContext.Managers.Single(m => m.Id == g.Key).Name,
+                         TotalSales = g.Sum(s => s.Cnt * efContext.Products.Single(p => p.Id == s.ProductId).Price)
+                     })
+                 .OrderByDescending(m => m.TotalSales)
+                 .FirstOrDefault();
+            // SqlException - Agregate in subquery
+
+            BestManagerHrn.Content = $"{bestHrn?.ManagerName} ({bestHrn?.TotalSales} грн)";
+            */
+            /*
+            var bestHrn = efContext.Managers
+                .GroupJoin(
+                    efContext.Sales.Where(s => s.SaleDt.Date == DateTime.Today),
+                    m => m.Id,
+                    s => s.ManagerId,
+                    (m, sales) => new
+                    {
+                        Manager = m,
+                        Hrn = sales
+                                .Join(
+                                    efContext.Products,
+                                    s => s.ProductId,
+                                    p => p.Id,
+                                    (s, p) => s.Cnt * p.Price )
+                                .Sum()
+                    })
+                .OrderByDescending(m => m.Hrn)
+                .First();
+            // працює нормально
+            */
+            var bestHrn = efContext.Managers
+                .GroupJoin(
+                    efContext.Sales
+                        .Where(s => s.SaleDt.Date == DateTime.Today)
+                        .Join(efContext.Products,s => s.ProductId,p => p.Id, 
+                            (s, p) => new { s.ManagerId, Summ = s.Cnt * p.Price } ) ,
+                    m => m.Id,
+                    s => s.ManagerId,
+                    (m, sales) => new
+                    {
+                        Manager = m,
+                        Hrn = sales.Sum(s=>s.Summ)
+                    })
+                .OrderByDescending(m => m.Hrn)
+                .First();
+
+            BestManagerHrn.Content = $"{bestHrn.Manager.Surname} ({bestHrn.Hrn} грн)";
+            /* Д.З. Вивести дані по відділах (департаментах)
+             * Назва відділу - сума усіх продажів за сьогодні 
+             * Враховуються тільки основні співробітники
+             * Впорядкувати за сумою продажів (максимальна згори)
+             * **також доповнити відомостями про кількість чеків та проданих одиниць товарів (по відділах)
+             */
+            #endregion
+
+            /*
+            foreach (var item in managers)
+            {
+                LogBlock.Text += $"{item.Manager.Surname} --- {item.Cnt}\n";
+            }*/
         }
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

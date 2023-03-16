@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ADO_202.View"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="EfWindow" Height="850" Width="1200">
+        Title="EfWindow" Height="880" Width="1200">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -92,6 +92,10 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 
                 <Label Grid.Row="0" Grid.Column="0" Content="Чеків"/>
@@ -117,12 +121,35 @@
 
                 <Separator Grid.Row="7" Grid.ColumnSpan="2"/>
                 
-                <Label Grid.Row="8" Grid.Column="0" Content="Кращий товар"/>
+                <Label Grid.Row="8" Grid.Column="0" Content="Кращий товар (чеки)"/>
                 <Label Grid.Row="8" Grid.Column="1" Content="-" x:Name="BestProduct"/>
+
+                <Label Grid.Row="9" Grid.Column="0" Content="Кращий товар (шт)"/>
+                <Label Grid.Row="9" Grid.Column="1" Content="-" x:Name="BestProductPcs"/>
+
+                <Label Grid.Row="10" Grid.Column="0" Content="Кращий товар (грн)"/>
+                <Label Grid.Row="10" Grid.Column="1" Content="-" x:Name="BestProductHrn"/>
+
+                <Separator  Grid.Row="11" Grid.ColumnSpan="2"/>
                 
+                <Label Grid.Row="12" Grid.Column="0" Content="Кращий робітник (чеки)"/>
+                <Label Grid.Row="12" Grid.Column="1" Content="-" x:Name="BestManager"/>
+
+                <Label Grid.Row="13" Grid.Column="0" Content="3 Кращі робітники (за шт)"/>
+                <Label Grid.Row="13" Grid.Column="1" x:Name="BestManagers" 
+                       Content="1. -&#10;2. -&#10;3. -" xml:space="preserve" />
+                
+                <Label Grid.Row="14" Grid.Column="0" Content="Кращий робітник (грн)"/>
+                <Label Grid.Row="14" Grid.Column="1" Content="-" x:Name="BestManagerHrn"/>
             </Grid>
         </StackPanel>
 
-        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LogBlock"/>
+        <Grid Grid.Row="1" Grid.Column="1" Margin="10"  Background="#333333">
+            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LogBlock"
+                       FontFamily="Consolas" FontSize="16" FontWeight="DemiBold"
+                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto"
+                       MaxHeight="375" Margin="10" Foreground="Lime"/>
+        </Grid>
     </Grid>
 </Window>
