@@ -30,6 +30,28 @@ namespace ADO_202.EFCore
             SeedDepartments(modelBuilder);
             SeedProducts(modelBuilder);
             SeedManagers(modelBuilder);
+
+            // налагодження відношень
+            modelBuilder.Entity<EFCore.Manager>()  // відношення Manager - Department
+                .HasOne(m => m.MainDep)            // референсна навігаційна властивість
+                .WithMany(d => d.Workers)          // колекційна ...
+                .HasForeignKey(m => m.IdMainDep)   // ключ у Manager (зовнішній, опціонально, якщо назва DepartmentId)
+                .HasPrincipalKey(d => d.Id);       // ключ у Department (опціонально, якщо назва - Id)
+            // Інверсне відношення Department - Manager налаштовується автоматично
+
+            modelBuilder.Entity<EFCore.Manager>()
+                .HasOne(m => m.SecDep)
+                .WithMany(d => d.SubWorkers)
+                .HasForeignKey(m => m.IdSecDep);
+
+            modelBuilder.Entity<EFCore.Sale>()
+                .HasOne(s => s.Product)
+                .WithMany(p => p.Sales);
+
+            modelBuilder.Entity<EFCore.Sale>()   // Оскільки поле Sale.ManagerId
+                .HasOne(s => s.Manager)          // відповідає правилам, його
+                .WithMany(m => m.Sales);         // можна не зазначати як ключ
+
         }
         #region Data seed
         private void SeedDepartments(ModelBuilder modelBuilder)
@@ -131,3 +153,9 @@ namespace ADO_202.EFCore
         #endregion
     }
 }
+/* Д.З. Перевірити відношення Sale - Product
+ * Встановити відношення Manager.Products -- Product.Managers
+ * 
+ * керівництво:
+ * https://learn.microsoft.com/en-us/ef/core/modeling/relationships?tabs=fluent-api%2Cfluent-api-simple-key%2Csimple-key
+ */

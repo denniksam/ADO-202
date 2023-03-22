@@ -26,7 +26,7 @@ namespace ADO_202.View
         private EfContext efContext;
         private ICollectionView DepartmentsListView;   // інтерфейс для доступу до DepartmentsList з можливістю фільтрації
         private static readonly Random random = new();
-
+        
         public EfWindow()
         {
             InitializeComponent();
@@ -34,7 +34,8 @@ namespace ADO_202.View
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // У EFCore - Lazy load - дані не завантажені до запитів
+            efContext.Sales.Load();  // У EFCore - Lazy load - дані не завантажені до запитів
+            
             efContext.Departments.Load();   // завантаження даних
             DepartmentsList.ItemsSource =
                 efContext.Departments.Local.ToObservableCollection();
@@ -46,6 +47,12 @@ namespace ADO_202.View
             // задаємо фільтр через цей інтерфейс
             DepartmentsListView.Filter =   // Predicate<object>
                 obj => (obj as Department)?.DeleteDt == null;  // TODO: replace with HideDeletedDepartmentsFilter
+
+
+            efContext.Managers.Load();   // завантаження даних
+            ManagersList.ItemsSource =
+                efContext.Managers.Local.ToObservableCollection();
+
 
             UpdateMonitor();
             UpdateDailyStatistics();

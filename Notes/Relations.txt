@@ -1,0 +1,51 @@
+Відношення між даними. Relations
+
+Відношення - ті самі зв'язки якими БД від інших форм організації даних
+
+Класично розрізняють наступні типи відношень
+ один-до-одного
+ один-до-багатьох
+ багато-до-багатьох
+
+Навігаційні властивості - властивості (get;set;) які посилаються на інші сутності
+EF автоматично вважає, що власитивість є навігаційною, якщо вона не належить до
+базових типів БД
+
+Department {								  Manager {
+	public Guid id { get; set; }			  	 public Guid id { get; set; }
+	// id  - не навігаційні вл., оскільки належать до базових типів даних
+
+												 public Department MainDep { get; set; }
+	public List<Manager> Workers { get; set; }
+
+}											  }
+
+EF класифікує навігаційні властивості:
+Manager.MainDep - референсна властивість (посилання на сутність)
+Department.Workers - колекційна властивість (колекція посилань)
+Manager.MainDep - інверсна властивість до Department.Workers,
+Department.Workers - інверсна властивість до Manager.MainDep 
+
+Налагодження навігаційних властивостей:
+а) автоматично за збігом імен: "Сутність" + "Id"
+б) з окремим налаштуванням (у конфігурації моделі)
+
+Завдання: утворити відношення Manager.SecDep -- Department.SubWorkers
+1. Manager { 
+	public Department SecDep { get; set; }
+2. Department {
+	public List<Manager> SubWorkers { get; set; }
+3. OnModelCreating(...) {
+		modelBuilder.Entity<EFCore.Manager>()
+                .HasOne(m => m.SecDep)
+                .WithMany(d => d.SubWorkers)
+                .HasForeignKey(m => m.IdSecDep);
+4. Поля у ListView:
+ 4.1. <ListView x:Name="DepartmentsList"
+		<GridViewColumn
+			Header="Sub"
+			DisplayMemberBinding="{Binding Path=SubWorkers.Count}"/>
+ 4.2. <ListView x:Name="ManagersList"
+		<GridViewColumn
+            Header="SecDep"
+            DisplayMemberBinding="{Binding Path=SecDep.Name}"/>

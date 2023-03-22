@@ -11,5 +11,11 @@ namespace ADO_202.EFCore
         public Guid      Id       { get; set; }
         public String    Name     { get; set; }
         public DateTime? DeleteDt { get; set; }
+
+
+        /////////////////// NAVIGATION PROPERTIES ////////////////////////
+
+        public List<Manager> Workers { get; set; }  // Collection prop
+        public List<Manager> SubWorkers { get; set; }  // Collection prop
     }
 }

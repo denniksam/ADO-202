@@ -57,6 +57,12 @@
                             Width="0"
                             Header="DeleteDt"
                             DisplayMemberBinding="{Binding Path=DeleteDt}"/>
+                        <GridViewColumn
+                            Header="Ws"
+                            DisplayMemberBinding="{Binding Path=Workers.Count}"/>
+                        <GridViewColumn
+                            Header="Sub"
+                            DisplayMemberBinding="{Binding Path=SubWorkers.Count}"/>
                     </GridView>
                 </ListView.View>
                 <ListView.Resources>
@@ -69,7 +75,40 @@
             </ListView>
         </StackPanel>
 
+        <ListView x:Name="ManagersList" Grid.Row="0" Grid.Column="2"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      MaxHeight="375">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                            Header="Surname"
+                            DisplayMemberBinding="{Binding Path=Surname}"/>
+                    <GridViewColumn
+                            Header="Name"
+                            DisplayMemberBinding="{Binding Path=Name}"/>
+                    <GridViewColumn
+                            Header="MainDep"
+                            DisplayMemberBinding="{Binding Path=MainDep.Name}"/>
+                    <GridViewColumn
+                            Header="SecDep"
+                            DisplayMemberBinding="{Binding Path=SecDep.Name}"/>
+                    <GridViewColumn
+                            Header="Sales"
+                            DisplayMemberBinding="{Binding Path=Sales.Count}"/>
+                </GridView>
+            </ListView.View>
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <EventSetter
+                            Event="MouseDoubleClick"
+                            Handler="ListViewItem_MouseDoubleClick"/>
+                </Style>
+            </ListView.Resources>
+        </ListView>
+
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+            <Image Source="/Image/img.jpg" Width="50"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Label Content="Денна статистика" FontWeight="DemiBold"/>
                 <Button Content="+ продаж" Padding="7 0 7 3" Margin="10 3 3 3"

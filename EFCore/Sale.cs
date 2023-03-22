@@ -14,5 +14,11 @@ namespace ADO_202.EFCore
         public Int32 Cnt { get; set; }
         public DateTime SaleDt { get; set; }
         public DateTime? DeleteDt { get; set; }
+
+
+        /////////////////// NAVIGATION PROPERTIES ////////////////////////
+
+        public Manager Manager { get; set; }
+        public Product Product { get; set; }
     }
 }

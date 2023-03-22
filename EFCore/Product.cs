@@ -13,5 +13,10 @@ namespace ADO_202.EFCore
         public double Price { get; set; }
         public DateTime? DeleteDt { get; set; }
 
+
+        /////////////////// NAVIGATION PROPERTIES ////////////////////////
+        public List<Sale> Sales { get; set; }
+        public List<Manager> Managers { get; set; }
+
     }
 }
